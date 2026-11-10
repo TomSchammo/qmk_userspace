@@ -3,5 +3,6 @@
 
 #pragma once
 
-#define TAPPING_TERM 150
-#define HOLD_ON_OTHER_KEY_PRESS
+#define TAPPING_TERM 125
+// Sometimes false positive when rolling the keys when typing quickly
+// #define HOLD_ON_OTHER_KEY_PRESS
