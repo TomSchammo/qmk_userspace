@@ -62,3 +62,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______,                                                          _______, _______, _______
         // └────────┴────────┴────────┘                                              └────────┴────────┴────────┘
         )};
+
+// Lighting follows the layer: solid white normally, the rainbow while the game
+// layer is on. Checked continuously rather than on layer change, because the
+// rgb_matrix setters do nothing while lighting is toggled off. Nothing is
+// written to EEPROM, and RM_TOGG keeps working in both modes.
+void housekeeping_task_user(void) {
+    // Only the master knows the layer state; the other half receives the
+    // resulting RGB config through the split sync.
+    if (!is_keyboard_master() || !rgb_matrix_is_enabled()) {
+        return;
+    }
+
+    bool    game = IS_LAYER_ON(_GAME);
+    uint8_t mode = game ? RGB_MATRIX_CYCLE_LEFT_RIGHT : RGB_MATRIX_SOLID_COLOR;
+    uint8_t sat  = game ? 255 : 0;
+
+    if (rgb_matrix_get_mode() != mode || rgb_matrix_get_sat() != sat) {
+        rgb_matrix_mode_noeeprom(mode);
+        rgb_matrix_sethsv_noeeprom(rgb_matrix_get_hue(), sat, rgb_matrix_get_val());
+    }
+}
