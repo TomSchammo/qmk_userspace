@@ -77,9 +77,11 @@ void housekeeping_task_user(void) {
     bool    game = IS_LAYER_ON(_GAME);
     uint8_t mode = game ? RGB_MATRIX_CYCLE_LEFT_RIGHT : RGB_MATRIX_SOLID_COLOR;
     uint8_t sat  = game ? 255 : 0;
+    // White runs at half brightness, the rainbow at the board's maximum.
+    uint8_t val = game ? RGB_MATRIX_MAXIMUM_BRIGHTNESS : RGB_MATRIX_MAXIMUM_BRIGHTNESS / 2;
 
-    if (rgb_matrix_get_mode() != mode || rgb_matrix_get_sat() != sat) {
+    if (rgb_matrix_get_mode() != mode || rgb_matrix_get_sat() != sat || rgb_matrix_get_val() != val) {
         rgb_matrix_mode_noeeprom(mode);
-        rgb_matrix_sethsv_noeeprom(rgb_matrix_get_hue(), sat, rgb_matrix_get_val());
+        rgb_matrix_sethsv_noeeprom(rgb_matrix_get_hue(), sat, val);
     }
 }
